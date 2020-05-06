@@ -2,6 +2,12 @@
 
 1v1音视频通话公共接口
 
+### 集成
+
+```
+ implementation 'io.agora.opensource:1v1-call-api:1.0.0'
+```
+
 ### 使用
 
 1. 在登录成功后或在获取到登录token后，初始化sdk

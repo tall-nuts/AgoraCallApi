@@ -64,7 +64,7 @@ dependencies {
 publish {
     userOrg = 'akid'
     groupId = 'io.agora.opensource'
-    artifactId = 'call-plugin-api'
+    artifactId = '1v1-call-api'
     publishVersion = '1.0.0'
     desc = 'Aogra 1v1 video/voice call sdk api for developer'
     website = 'https://github.com/pengfeigao/AgoraCallApi'
