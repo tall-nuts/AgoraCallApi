@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    android.libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith(".aar")){
+                def fileName = "${project.name}_v${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime()}_${buildType.name}.aar"
+                if (fileName.contains("-")){
+                    // 替换中划线为下划线
+                    fileName = fileName.replaceAll("-", "_")
+                }
+                output.outputFileName = fileName
+            }
+        }
+    }
+}
+
+static def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08"))
+}
+
+dependencies {
+    implementation "com.google.code.gson:gson:2.8.6"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.2'
+}
+
+//添加
+publish {
+    userOrg = 'akid'
+    groupId = 'io.agora.opensource'
+    artifactId = 'call-plugin-api'
+    publishVersion = '1.0.0'
+    desc = 'Aogra 1v1 video/voice call sdk api for developer'
+    website = 'https://github.com/pengfeigao/AgoraCallApi'
+}
