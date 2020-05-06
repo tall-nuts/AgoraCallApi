@@ -15,13 +15,14 @@
 ```
 // 初始化
 CallConfig callConfig = new CallConfig.Builder(
-        "http://www.google.com/",
-        "68e109f0f40ca72a15e05cc22786f8e6",
-        "",
-        true).build();
-// 若项目为海外项目则使用该方法进行初始化
+        "http://www.google.com/", // host url
+        "68e109f0f40ca72a15e05cc22786f8e6", // token
+        "", // platform json data
+        true) // is global integration
+        .build();
+// module方式集成，使用该方法初始化
 CallKit.initForModule(this, callConfig);
-// 若项目为国内项目且使用了插件化技术，则使用该方法进行初始化
+// 插件化 方式集成，使用该方法初始化
 CallKit.initForRePlugin(this, callConfig);
 ```
 
