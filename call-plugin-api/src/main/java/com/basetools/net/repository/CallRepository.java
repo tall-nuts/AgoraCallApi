@@ -13,6 +13,8 @@ import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
 import com.basetools.model.RefuseRequest;
+import com.basetools.model.UpdatePackageRequest;
+import com.basetools.model.UpdatePackageResult;
 import com.basetools.net.core.ApiClient;
 import com.basetools.net.core.ApiException;
 import com.basetools.net.core.ApiObserver;
@@ -30,6 +32,23 @@ public class CallRepository {
 
     public static CallRepository getInstance() {
         return SingletonHolder.sInstance;
+    }
+
+    /**
+     * 检测插件版本信息
+     * @param request 请求参数
+     * @param apiObserver 回调
+     */
+    public void checkCallPluginVersion(UpdatePackageRequest request, ApiObserver<UpdatePackageResult> apiObserver){
+        CallService callService = ApiClient.getInstance().createApi(CallService.class);
+        callService.checkCallPluginVersion(request).map(bridge -> {
+            if (bridge == null) {
+                throw new ApiException(ApiException.CODE_FAILED, "Fetch data failure!");
+            } else if (bridge.getCode() != 1) {
+                throw new ApiException(bridge.getCode(), bridge.getMsg());
+            }
+            return bridge;
+        }).compose(RxSchedulers.apply()).subscribe(apiObserver);
     }
 
     /**

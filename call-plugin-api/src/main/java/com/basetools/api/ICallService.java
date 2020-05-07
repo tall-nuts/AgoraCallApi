@@ -148,28 +148,16 @@ public interface ICallService {
      * @param remoteNickname 收信人昵称
      * @param remoteAvatar 收信人头像
      * @param message 消息内容
-     */
-    @Deprecated
-    void sendPrivateMessage(String remoteUid, String remoteNickname, String remoteAvatar, String message);
-
-    /**
-     * 发私信
-     * @param remoteUid 收信人ID
-     * @param remoteNickname 收信人昵称
-     * @param remoteAvatar 收信人头像
-     * @param message 消息内容
      * @param ext 扩展参数
      */
     void sendPrivateMessage(String remoteUid, String remoteNickname, String remoteAvatar, String message, Serializable ext);
 
     /**
-     * 1V1通话页面关闭
-     * @param remoteUid 对方ID
-     * @param remoteNickname 对方昵称
-     * @param remoteAvatar 对方头像
+     * 通话已建立
+     * @param channelId 频道ID
+     * @param serializable 扩展信息
      */
-    @Deprecated
-    void onCallActivityFinish(long remoteUid, String remoteNickname, String remoteAvatar);
+    void onCallConnected(String channelId, Serializable serializable);
 
     /**
      * 1V1通话页面关闭

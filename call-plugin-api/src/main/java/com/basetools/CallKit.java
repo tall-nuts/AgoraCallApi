@@ -429,6 +429,7 @@ public class CallKit {
                         token = joinChannelResult.getData().getToken();
                     }
                     okTask.run(token);
+                    getICallService().onCallConnected(channelId, ext);
                 }
             }
 
