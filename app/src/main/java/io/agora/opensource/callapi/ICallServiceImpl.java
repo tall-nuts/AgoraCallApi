@@ -103,17 +103,12 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public void sendPrivateMessage(String remoteUid, String remoteNickname, String remoteAvatar, String message) {
-
-    }
-
-    @Override
     public void sendPrivateMessage(String remoteUid, String remoteNickname, String remoteAvatar, String message, Serializable ext) {
 
     }
 
     @Override
-    public void onCallActivityFinish(long remoteUid, String remoteNickname, String remoteAvatar) {
+    public void onCallConnected(String channelId, Serializable serializable) {
 
     }
 
