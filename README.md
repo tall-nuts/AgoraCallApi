@@ -8,7 +8,7 @@
 ##### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.0'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.1'
 ```
 
 ##### 使用
