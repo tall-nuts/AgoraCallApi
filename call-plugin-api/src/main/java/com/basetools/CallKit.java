@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.basetools.api.ICallService;
 import com.basetools.constant.InviteType;
 import com.basetools.constant.RoomType;
+import com.basetools.listener.CheckCallPluginVersionListener;
 import com.basetools.model.BaseResult;
 import com.basetools.model.CreateChannelRequest;
 import com.basetools.model.CreateChannelResult;
@@ -22,6 +23,8 @@ import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
 import com.basetools.model.RefuseRequest;
+import com.basetools.model.UpdatePackageRequest;
+import com.basetools.model.UpdatePackageResult;
 import com.basetools.net.config.CallConfig;
 import com.basetools.net.core.ApiException;
 import com.basetools.net.core.ApiObserver;
@@ -45,15 +48,25 @@ import java.util.List;
  */
 public class CallKit {
 
-    /** 国内音视频通话模块包名： com.juzhionline.callplugin */
+    /**
+     * 国内音视频通话模块包名： com.juzhionline.callplugin
+     */
     private static final String DEFAULT_PACKAGE_NAME = "Y29tLmp1emhpb25saW5lLmNhbGxwbHVnaW4=";
-    /** 海外音视频通话模块包名：io.agora.opensource */
+    /**
+     * 海外音视频通话模块包名：io.agora.opensource
+     */
     private static final String GLOBAL_PACKAGE_NAME = "aW8uYWdvcmEub3BlbnNvdXJjZQ==";
-    /** 应用 */
+    /**
+     * 应用实例
+     */
     private static Application mApp;
-    /** 初始化配置参数 */
+    /**
+     * 初始化配置参数
+     */
     private static CallConfig mCallConfig;
-    /** 公开业务api接口 */
+    /**
+     * 公开业务api接口
+     */
     private static ICallService mCallService;
 
     private static class SingletonHolder {
@@ -61,8 +74,8 @@ public class CallKit {
     }
 
     public static CallKit getInstance() {
-        if (mCallConfig == null){
-            throw new RuntimeException("Please initialize first");
+        if (mCallConfig == null) {
+            throw new RuntimeException("Please initialize CallKit first!!!");
         }
         return CallKit.SingletonHolder.sInstance;
     }
@@ -73,20 +86,27 @@ public class CallKit {
      * @param application 应用实例
      * @param config      配置
      */
-    public static void initForModule(Application application, CallConfig config) {
+    public static void initForModule(@NonNull Application application, @NonNull CallConfig config) {
         if (config.isDebugEnable()) {
             Timber.plant(new Timber.DebugTree());
         }
         mApp = application;
         mCallConfig = config;
         boolean isMainProcess = application.getApplicationContext().getPackageName().equals(getCurrentProcessName(application));
+        // 只有在主进程时初始化相应数据
         if (isMainProcess) {
-            // 只有在主进程时初始化相应数据
             try {
                 Class<?> clazz = Class.forName(getAppPath(config.isGlobal()));
-                Object obj = clazz.newInstance();
-                if (obj instanceof IComponentApplication) {
-                    ((IComponentApplication) obj).init(application);
+                if (clazz != null) {
+                    Object obj = clazz.newInstance();
+                    if (obj instanceof IComponentApplication) {
+                        ((IComponentApplication) obj).init(application);
+                        Timber.d("initForModule success.");
+                    }else {
+                        Timber.e("");
+                    }
+                } else {
+                    Timber.e("App is null, initForModule failure!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -102,12 +122,13 @@ public class CallKit {
      * @param application 应用实例
      * @param config      配置
      */
-    public static void initForRePlugin(Application application, CallConfig config) {
+    public static void initForRePlugin(@NonNull Application application, @NonNull CallConfig config) {
         if (config.isDebugEnable()) {
             Timber.plant(new Timber.DebugTree());
         }
         mApp = application;
         mCallConfig = config;
+        Timber.d("initForRePlugin success.");
     }
 
     public Application getApplication() {
@@ -143,19 +164,23 @@ public class CallKit {
 
     /**
      * 反射创建ICallService对象
+     *
      * @return ICallService
      */
     private ICallService reflectICallServiceNewInstance() {
         if (mCallConfig == null) {
-            return null;
+            throw new RuntimeException("Please initialize CallKit first!!!");
         }
         try {
-            Class<?> videoCallApiImplClass = Class.forName(getCallPluginPackageName(mCallConfig.isGlobal()) + ".callapi.CallServiceImpl");
-            Object callServiceImpl = videoCallApiImplClass.newInstance();
-            return (ICallService) callServiceImpl;
+            Class<?> callServiceImplClass = Class.forName(getCallPluginPackageName(mCallConfig.isGlobal()) + ".callapi.CallServiceImpl");
+            if (callServiceImplClass != null) {
+                Object callServiceImpl = callServiceImplClass.newInstance();
+                return (ICallService) callServiceImpl;
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        Timber.e("Reflect ICallServiceNewInstance failure, !!!");
         return null;
     }
 
@@ -241,6 +266,7 @@ public class CallKit {
 
     /**
      * 获取音视频插件或Module依赖的包名
+     *
      * @param global 是否为海外集成
      * @return 包名
      */
@@ -251,6 +277,7 @@ public class CallKit {
                     : DEFAULT_PACKAGE_NAME.getBytes("UTF-8"), Base64.NO_WRAP));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            Timber.e("getCallPluginPackageName exception：" + e.getMessage());
             return "";
         }
     }
@@ -278,6 +305,7 @@ public class CallKit {
                     : DEFAULT_PACKAGE_NAME.getBytes("UTF-8"), Base64.NO_WRAP)) + ".App";
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            Timber.e("getAppPath exception：" + e.getMessage());
             return "";
         }
     }
@@ -301,112 +329,47 @@ public class CallKit {
         for (ActivityManager.RunningAppProcessInfo aInfo : info) {
             if (aInfo.pid == pid) {
                 if (aInfo.processName != null) {
+                    Timber.d("getCurrentProcessName >>> " + aInfo.processName);
                     return aInfo.processName;
                 }
             }
         }
+        Timber.d("getCurrentProcessName >>> null");
         return "";
     }
 
     /* ******************************************************** ICallApi ********************************************************** */
 
     /**
-     * 加入频道
+     * 检查通话插件版本信息
      *
-     * @param channelId 频道ID
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
+     * @param listener 回调监听
      */
-    @Deprecated
-    public void joinChannel(String channelId, AbstractJoinChannelSuccessTask okTask, AbstractJoinChannelFailureTask errorTask) {
-        joinChannel(channelId, null, okTask, errorTask);
-    }
+    public void checkCallPluginVersion(CheckCallPluginVersionListener listener) {
+        Timber.d("checkCallPluginVersion >>>");
+        CallRepository.getInstance().checkCallPluginVersion(new UpdatePackageRequest(), new ApiObserver<UpdatePackageResult>() {
 
-    /**
-     * 离开频道
-     *
-     * @param channelId 频道ID
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
-     */
-    @Deprecated
-    public void leaveChannel(String channelId, IBaseTask okTask, IBaseTask errorTask) {
-        leaveChannel(channelId, null, okTask, errorTask);
-    }
+            @Override
+            public void onNext(UpdatePackageResult updatePackageResult) {
+                if (updatePackageResult != null) {
+                    UpdatePackageResult.CallPluginInfo callPluginInfo = updatePackageResult.getData();
+                    if (callPluginInfo != null && listener != null) {
+                        listener.onFetchCallPluginVersionSuccess(callPluginInfo.getOneToOneUrl(), callPluginInfo.getOneToOneVer());
+                    }
+                }
+            }
 
-    /**
-     * 心跳
-     *
-     * @param channelId 频道ID
-     * @param chatId    消息ID
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
-     */
-    @Deprecated
-    public void heartBeat(String channelId, long chatId, AbstractHeartbeatSuccessTask okTask, AbstractHeartbeatFailureTask errorTask) {
-        heartBeat(channelId, chatId, null, okTask, errorTask);
-    }
-
-    /**
-     * 拒绝通话
-     *
-     * @param remoteUid  对方ID
-     * @param refuseType 拒绝类型：0 挂断 1 忙碌中 2 呼叫方取消
-     * @param okTask     接口执行成功后需要执行的任务
-     * @param errorTask  接口执行失败后执行的任务
-     */
-    @Deprecated
-    public void refuseCall(long remoteUid, int refuseType, IBaseTask okTask, IBaseTask errorTask) {
-        refuseCall(null, remoteUid, refuseType, null, okTask, errorTask);
-    }
-
-    /**
-     * 创建频道
-     *
-     * @param roomType  类型：8：视频  9：语音
-     * @param remoteUid 对方ID
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
-     */
-    @Deprecated
-    public void createChannel(@RoomType int roomType, long remoteUid, AbstractCreateChannelSuccessTask okTask, AbstractCreateChannelFailureTask errorTask) {
-        createChannel(roomType, remoteUid, null, okTask, errorTask);
-    }
-
-    /**
-     * 送礼物
-     *
-     * @param context   Contenxt
-     * @param userId    收礼人ID
-     * @param channelId 频道ID
-     * @param giftId    礼物ID
-     * @param count     礼物数量
-     */
-    @Deprecated
-    public void giveGift(Context context, long userId, long channelId, String giftId, int count) {
-        giveGift(context, userId, channelId, giftId, count, null);
-    }
-
-    /**
-     * 埋点统计
-     *
-     * @param eventType 事件类型
-     */
-    @Deprecated
-    public void logMonitoring(String eventType) {
-        logMonitoring(eventType, null);
-    }
-
-    /**
-     * 加入频道
-     *
-     * @param channelId 频道ID
-     * @param ext       扩展参数
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
-     */
-    public void joinChannel(String channelId, Serializable ext, AbstractJoinChannelSuccessTask okTask, AbstractJoinChannelFailureTask errorTask) {
-        joinChannel(channelId, 1, ext, okTask, errorTask);
+            @Override
+            protected void onErrorResolved(Throwable e, String msg) {
+                if (listener != null) {
+                    int code = -1;
+                    if (e instanceof ApiException) {
+                        code = ((ApiException) e).getCode();
+                    }
+                    listener.onFetchCallPluginVersionFailure(code, msg);
+                }
+            }
+        });
     }
 
     /**
@@ -419,6 +382,7 @@ public class CallKit {
      * @param errorTask    接口执行失败后执行的任务
      */
     public void joinChannel(String channelId, int loginFeeType, Serializable ext, AbstractJoinChannelSuccessTask okTask, AbstractJoinChannelFailureTask errorTask) {
+        Timber.d("joinChannel >>> channelId:" + channelId + " | ext:" + ext);
         CallRepository.getInstance().joinChannel(new JoinChannelRequest(channelId, loginFeeType), new ApiObserver<JoinChannelResult>() {
 
             @Override
@@ -437,7 +401,7 @@ public class CallKit {
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
                 boolean runErrorTask = resolvedError(e);
-                if (runErrorTask && errorTask != null){
+                if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
             }
@@ -453,6 +417,7 @@ public class CallKit {
      * @param errorTask 接口执行失败后执行的任务
      */
     public void leaveChannel(String channelId, Serializable ext, IBaseTask okTask, IBaseTask errorTask) {
+        Timber.d("leaveChannel >>> channelId:" + channelId + " | ext:" + ext);
         CallRepository.getInstance().leaveChannel(new LeaveChannelRequest(channelId), new ApiObserver<BaseResult>() {
             @Override
             public void onNext(BaseResult baseResult) {
@@ -493,10 +458,11 @@ public class CallKit {
      * @param errorTask    接口执行失败后执行的任务
      */
     public void heartBeat(String channelId, long chatId, int loginFeeType, Serializable ext, AbstractHeartbeatSuccessTask okTask, AbstractHeartbeatFailureTask errorTask) {
+        Timber.d("heartBeat >>> channelId:" + channelId + " | chatId:" + chatId + " | loginFeeType:" + loginFeeType + " | ext:" + ext);
         CallRepository.getInstance().heartbeat(new HeartBeatRequest(channelId, String.valueOf(chatId), loginFeeType), new ApiObserver<HeartBeatResult>() {
             @Override
             public void onNext(HeartBeatResult heartBeatResult) {
-                if (mCallService != null){
+                if (mCallService != null) {
                     mCallService.updateDiamondBalance(heartBeatResult.getData());
                 }
                 if (okTask != null) {
@@ -507,7 +473,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                if (errorTask != null){
+                if (errorTask != null) {
                     errorTask.run();
                 }
             }
@@ -525,6 +491,7 @@ public class CallKit {
      * @param errorTask  接口执行失败后执行的任务
      */
     public void refuseCall(String channelId, long remoteUid, int refuseType, Serializable ext, IBaseTask okTask, IBaseTask errorTask) {
+        Timber.d("refuseCall >>> channelId:" + channelId + " | remoteUid:" + remoteUid + " | refuseType:" + refuseType + " | ext:" + ext);
         CallRepository.getInstance().refuse(new RefuseRequest(remoteUid, refuseType), new ApiObserver<BaseResult>() {
             @Override
             public void onNext(BaseResult baseResult) {
@@ -551,6 +518,7 @@ public class CallKit {
      * @param errorTask 接口执行失败后执行的任务
      */
     public void createChannel(@RoomType int roomType, long remoteUid, Serializable ext, AbstractCreateChannelSuccessTask okTask, AbstractCreateChannelFailureTask errorTask) {
+        Timber.d("createChannel >>> roomType:" + roomType + " | remoteUid:" + remoteUid + " | ext:" + ext);
         CallRepository.getInstance().createChannel(new CreateChannelRequest(roomType, String.valueOf(remoteUid)), new ApiObserver<CreateChannelResult>() {
             @Override
             public void onNext(CreateChannelResult createChannelResult) {
@@ -563,7 +531,7 @@ public class CallKit {
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
                 boolean runErrorTask = resolvedError(e);
-                if (runErrorTask && errorTask != null){
+                if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
                 if (CallKit.getInstance().isDebugEnable()) {
@@ -584,6 +552,7 @@ public class CallKit {
      * @param ext       扩展参数
      */
     public void giveGift(Context context, long userId, long channelId, String giftId, int count, Serializable ext) {
+        Timber.d("createChannel >>> userId:" + userId + " | channelId:" + channelId + " | giftId:" + giftId + " | count:" + count + " | ext:" + ext);
         CallRepository.getInstance().giftSend(new GiveGiftRequest(userId, giftId, count, channelId), new ApiObserver<BaseResult>() {
             @Override
             public void onNext(BaseResult baseResult) {
@@ -611,9 +580,10 @@ public class CallKit {
      */
     public void logMonitoring(String eventType, Serializable ext) {
         // do nothing
+        Timber.d("logMonitoring >>> eventType:" + eventType + " | ext:" + ext);
     }
 
-    private boolean resolvedError(Throwable e){
+    private boolean resolvedError(Throwable e) {
         if (e instanceof ApiException) {
             final int code = ((ApiException) e).getCode();
             if (code == 1100) {
