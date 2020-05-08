@@ -103,6 +103,11 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
+    public void interceptNobleStar() {
+
+    }
+
+    @Override
     public void sendPrivateMessage(String remoteUid, String remoteNickname, String remoteAvatar, String message, Serializable ext) {
 
     }
