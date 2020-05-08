@@ -7,7 +7,6 @@ import androidx.annotation.IntDef;
 /**
  * 房间类型
  * @author gaopengfei on 2019/10/18.
- * @version v1.0.17
  */
 @IntDef({
         RoomType.VIDEO_CALL,

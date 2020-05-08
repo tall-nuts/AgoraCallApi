@@ -16,7 +16,7 @@ import android.app.Application;
  * 2、
  * </br>
  * try {</br>
- *      Class<?> clazz = Class.forName("com.juzhionline.callplugin" + ".App");</br>
+ *      Class<?> clazz = Class.forName("com.xxx.xxx" + ".App");</br>
  *      Object obj = clazz.newInstance();</br>
  *      if (obj instanceof IComponentApplication) {</br>
  *          ((IComponentApplication) obj).init(MyApplication.getInstance());</br>
@@ -30,7 +30,6 @@ import android.app.Application;
  * }</br>
  *
  * @author lvst
- * @version v1.0.17
  */
 public interface IComponentApplication {
 

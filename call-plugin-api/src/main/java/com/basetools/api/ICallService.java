@@ -15,7 +15,6 @@ import java.io.Serializable;
  * 说明：该module所编译生成的jar包同时会在callPlugin插件中引入依赖，插件中会通过反射调用ICallServiceImpl.java类进行使用。</br>
  *
  * @author gaopengfei on 2019/12/07.
- * @version v1.0.19
  */
 public interface ICallService {
 
@@ -141,6 +140,11 @@ public interface ICallService {
      * 余额|钻石拦截
      */
     void interceptBalance();
+
+    /**
+     * 星级拦截
+     */
+    void interceptNobleStar();
 
     /**
      * 发私信

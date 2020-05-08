@@ -43,8 +43,6 @@ import java.util.List;
 
 /**
  * 1V1通话CallActivity启动工具
- *
- * @version v1.0.19
  */
 public class CallKit {
 
@@ -437,19 +435,6 @@ public class CallKit {
     /**
      * 心跳
      *
-     * @param channelId 频道ID
-     * @param chatId    消息ID
-     * @param ext       扩展参数
-     * @param okTask    接口执行成功后需要执行的任务
-     * @param errorTask 接口执行失败后执行的任务
-     */
-    public void heartBeat(String channelId, long chatId, Serializable ext, AbstractHeartbeatSuccessTask okTask, AbstractHeartbeatFailureTask errorTask) {
-        heartBeat(channelId, chatId, 1, ext, okTask, errorTask);
-    }
-
-    /**
-     * 心跳
-     *
      * @param channelId    频道ID
      * @param chatId       消息ID
      * @param loginFeeType 是否已建立通话(注：joinChannel、heartBeat都传) 0 否 1 是
@@ -596,7 +581,12 @@ public class CallKit {
                 if (mCallService != null) {
                     mCallService.interceptVip();
                 }
-            } else {
+            } else if (code == 1308){
+                // 星级拦截
+                if (mCallService != null){
+                    mCallService.interceptNobleStar();
+                }
+            }else {
                 return true;
             }
         } else {

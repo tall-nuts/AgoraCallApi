@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * 邀请类型
  * @author gaopengfei
- * @version v1.0.17
  */
 @IntDef({
         InviteType.SEND,
