@@ -5,11 +5,11 @@ import java.io.Serializable;
 /**
  * 心跳响应数据
  */
-public class HeartBeatResult implements Serializable {
+public class HeartBeatResult2 implements Serializable {
 
     private String msg;
     private int code;
-    private int data;
+    private Data data;
     private Object ext;
 
     public String getMsg() {
@@ -28,11 +28,11 @@ public class HeartBeatResult implements Serializable {
         this.code = code;
     }
 
-    public int getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(int data) {
+    public void setData(Data data) {
         this.data = data;
     }
 
@@ -44,9 +44,28 @@ public class HeartBeatResult implements Serializable {
         this.ext = ext;
     }
 
+    public static class Data {
+        private int diamondNum;
+
+        public int getDiamondNum() {
+            return diamondNum;
+        }
+
+        public void setDiamondNum(int diamondNum) {
+            this.diamondNum = diamondNum;
+        }
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "diamondNum=" + diamondNum +
+                    '}';
+        }
+    }
+
     @Override
     public String toString() {
-        return "HeartBeatResult{" +
+        return "HeartBeatResult2{" +
                 "msg='" + msg + '\'' +
                 ", code=" + code +
                 ", data=" + data +

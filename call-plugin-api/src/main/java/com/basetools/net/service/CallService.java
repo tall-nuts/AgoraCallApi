@@ -9,6 +9,7 @@ import com.basetools.model.GiveGiftRequest;
 import com.basetools.model.GiveGiftMsgRequest;
 import com.basetools.model.HeartBeatRequest;
 import com.basetools.model.HeartBeatResult;
+import com.basetools.model.HeartBeatResult2;
 import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
@@ -33,6 +34,9 @@ public interface CallService {
 
     @POST("rocket/one/heartBeat")
     Observable<HeartBeatResult> heartbeat(@Body HeartBeatRequest request);
+
+    @POST("rocket/one/heartBeat")
+    Observable<HeartBeatResult2> heartbeatV2(@Body HeartBeatRequest request);
 
     @POST("rocket/one/refuse")
     Observable<BaseResult> refuse(@Body RefuseRequest request);

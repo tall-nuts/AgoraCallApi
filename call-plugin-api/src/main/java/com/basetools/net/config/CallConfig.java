@@ -27,13 +27,18 @@ public class CallConfig {
      * 是否为海外项目集成
      */
     private boolean global;
+    /**
+     * 用于兼容v2版本心跳
+     */
+    private boolean fixHeartbeatApi;
 
-    private CallConfig(String baseUrl, String token, String platformJson, boolean global, boolean debugEnable) {
+    private CallConfig(String baseUrl, String token, String platformJson, boolean global, boolean debugEnable, boolean fixHeartbeatApi) {
         this.baseUrl = baseUrl;
         this.token = token;
         this.platformJson = platformJson;
         this.global = global;
         this.debugEnable = debugEnable;
+        this.fixHeartbeatApi = fixHeartbeatApi;
     }
 
     public String getBaseUrl() {
@@ -41,6 +46,9 @@ public class CallConfig {
             // Retrofit$Builder java.lang.IllegalArgumentException: baseUrl must end in /
             if (!baseUrl.endsWith("/")){
                 baseUrl += "/";
+            }
+            if (baseUrl.endsWith("/rocket/")){
+                baseUrl = baseUrl.replace("/rocket", "");
             }
         }
         return baseUrl;
@@ -60,6 +68,10 @@ public class CallConfig {
 
     public boolean isGlobal() {
         return global;
+    }
+
+    public boolean isFixHeartbeatApi() {
+        return fixHeartbeatApi;
     }
 
     public static class Builder{
@@ -83,6 +95,10 @@ public class CallConfig {
          * 是否为海外项目集成
          */
         private boolean global;
+        /**
+         * 用于兼容v2版本心跳
+         */
+        private boolean fixHeartbeatApi;
 
         public Builder(@NonNull String baseUrl, @NonNull String token, @NonNull String platformJson, boolean global) {
             this.baseUrl = baseUrl;
@@ -116,8 +132,13 @@ public class CallConfig {
             return this;
         }
 
+        public Builder setFixHeartbeatApi(boolean fixHeartbeatApi){
+            this.fixHeartbeatApi = fixHeartbeatApi;
+            return this;
+        }
+
         public CallConfig build(){
-            return new CallConfig(baseUrl, token, platformJson, global, debugEnable);
+            return new CallConfig(baseUrl, token, platformJson, global, debugEnable, fixHeartbeatApi);
         }
     }
 }

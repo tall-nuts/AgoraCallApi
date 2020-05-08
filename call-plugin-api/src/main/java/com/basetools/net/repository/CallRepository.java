@@ -9,6 +9,7 @@ import com.basetools.model.GiveGiftRequest;
 import com.basetools.model.GiveGiftMsgRequest;
 import com.basetools.model.HeartBeatRequest;
 import com.basetools.model.HeartBeatResult;
+import com.basetools.model.HeartBeatResult2;
 import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
@@ -93,6 +94,23 @@ public class CallRepository {
     public void heartbeat(HeartBeatRequest request, ApiObserver<HeartBeatResult> apiObserver){
         CallService callService = ApiClient.getInstance().createApi(CallService.class);
         callService.heartbeat(request).map(bridge -> {
+            if (bridge == null) {
+                throw new ApiException(ApiException.CODE_FAILED, "Fetch data failure!");
+            } else if (bridge.getCode() != 1) {
+                throw new ApiException(bridge.getCode(), bridge.getMsg());
+            }
+            return bridge;
+        }).compose(RxSchedulers.apply()).subscribe(apiObserver);
+    }
+
+    /**
+     * 心跳
+     * @param request 请求参数
+     * @param apiObserver 回调
+     */
+    public void heartbeatV2(HeartBeatRequest request, ApiObserver<HeartBeatResult2> apiObserver){
+        CallService callService = ApiClient.getInstance().createApi(CallService.class);
+        callService.heartbeatV2(request).map(bridge -> {
             if (bridge == null) {
                 throw new ApiException(ApiException.CODE_FAILED, "Fetch data failure!");
             } else if (bridge.getCode() != 1) {

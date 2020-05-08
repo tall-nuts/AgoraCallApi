@@ -8,7 +8,9 @@ import android.content.ComponentName;
 import android.os.Process;
 import android.util.Base64;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+
 import com.basetools.api.ICallService;
 import com.basetools.constant.InviteType;
 import com.basetools.constant.RoomType;
@@ -19,6 +21,7 @@ import com.basetools.model.CreateChannelResult;
 import com.basetools.model.GiveGiftRequest;
 import com.basetools.model.HeartBeatRequest;
 import com.basetools.model.HeartBeatResult;
+import com.basetools.model.HeartBeatResult2;
 import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
@@ -37,6 +40,7 @@ import com.basetools.task.AbstractJoinChannelFailureTask;
 import com.basetools.task.AbstractJoinChannelSuccessTask;
 import com.basetools.task.IBaseTask;
 import com.basetools.util.Timber;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -100,7 +104,7 @@ public class CallKit {
                     if (obj instanceof IComponentApplication) {
                         ((IComponentApplication) obj).init(application);
                         Timber.d("initForModule success.");
-                    }else {
+                    } else {
                         Timber.e("");
                     }
                 } else {
@@ -444,25 +448,47 @@ public class CallKit {
      */
     public void heartBeat(String channelId, long chatId, int loginFeeType, Serializable ext, AbstractHeartbeatSuccessTask okTask, AbstractHeartbeatFailureTask errorTask) {
         Timber.d("heartBeat >>> channelId:" + channelId + " | chatId:" + chatId + " | loginFeeType:" + loginFeeType + " | ext:" + ext);
-        CallRepository.getInstance().heartbeat(new HeartBeatRequest(channelId, String.valueOf(chatId), loginFeeType), new ApiObserver<HeartBeatResult>() {
-            @Override
-            public void onNext(HeartBeatResult heartBeatResult) {
-                if (mCallService != null) {
-                    mCallService.updateDiamondBalance(heartBeatResult.getData());
+        if (mCallConfig != null && mCallConfig.isFixHeartbeatApi()) {
+            CallRepository.getInstance().heartbeatV2(new HeartBeatRequest(channelId, String.valueOf(chatId), loginFeeType), new ApiObserver<HeartBeatResult2>() {
+                @Override
+                public void onNext(HeartBeatResult2 heartBeatResult) {
+                    if (mCallService != null) {
+                        mCallService.updateDiamondBalance(heartBeatResult.getData().getDiamondNum());
+                    }
+                    if (okTask != null) {
+                        okTask.run(heartBeatResult.getData().getDiamondNum(), heartBeatResult.getExt());
+                    }
                 }
-                if (okTask != null) {
-                    okTask.run(heartBeatResult.getData(), heartBeatResult.getExt());
-                }
-            }
 
-            @Override
-            protected void onErrorResolved(Throwable e, String msg) {
-                Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                if (errorTask != null) {
-                    errorTask.run();
+                @Override
+                protected void onErrorResolved(Throwable e, String msg) {
+                    Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
+                    if (errorTask != null) {
+                        errorTask.run();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            CallRepository.getInstance().heartbeat(new HeartBeatRequest(channelId, String.valueOf(chatId), loginFeeType), new ApiObserver<HeartBeatResult>() {
+                @Override
+                public void onNext(HeartBeatResult heartBeatResult) {
+                    if (mCallService != null) {
+                        mCallService.updateDiamondBalance(heartBeatResult.getData());
+                    }
+                    if (okTask != null) {
+                        okTask.run(heartBeatResult.getData(), heartBeatResult.getExt());
+                    }
+                }
+
+                @Override
+                protected void onErrorResolved(Throwable e, String msg) {
+                    Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
+                    if (errorTask != null) {
+                        errorTask.run();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -581,12 +607,12 @@ public class CallKit {
                 if (mCallService != null) {
                     mCallService.interceptVip();
                 }
-            } else if (code == 1308){
+            } else if (code == 1308) {
                 // 星级拦截
-                if (mCallService != null){
+                if (mCallService != null) {
                     mCallService.interceptNobleStar();
                 }
-            }else {
+            } else {
                 return true;
             }
         } else {

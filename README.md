@@ -8,7 +8,7 @@
 ##### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.3'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.4'
 ```
 
 ##### 使用
@@ -22,6 +22,8 @@ CallConfig callConfig = new CallConfig.Builder(
         "68e109f0f40ca72a15e05cc22786f8e6", // token
         "", // platform json data
         true) // is global integration
+        .setDebugEnable(true) // isDebug ? output log
+        .setFixHeartbeatApi(true) // heartbeat v2
         .build();
 // module方式集成，使用该方法初始化
 CallKit.initForModule(this, callConfig);
