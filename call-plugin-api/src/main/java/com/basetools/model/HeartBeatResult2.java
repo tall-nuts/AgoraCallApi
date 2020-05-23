@@ -36,7 +36,7 @@ public class HeartBeatResult2 implements Serializable {
         this.data = data;
     }
 
-    public Object getExt() {
+    public HeartbeatExt getExt() {
         return ext;
     }
 
