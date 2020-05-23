@@ -10,7 +10,7 @@ public class HeartBeatResult2 implements Serializable {
     private String msg;
     private int code;
     private Data data;
-    private Object ext;
+    private HeartbeatExt ext;
 
     public String getMsg() {
         return msg;
@@ -40,7 +40,7 @@ public class HeartBeatResult2 implements Serializable {
         return ext;
     }
 
-    public void setExt(Object ext) {
+    public void setExt(HeartbeatExt ext) {
         this.ext = ext;
     }
 

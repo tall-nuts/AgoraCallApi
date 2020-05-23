@@ -7,7 +7,7 @@ public class GiveGiftMsgRequest {
     private long userId;
     private String giftId;
     private int count;
-    private int type = 1;
+    private int type; // 默认0，通话中送礼物传 2
     private int isNewApp = 1;
     private Platform platform;
 
@@ -15,7 +15,15 @@ public class GiveGiftMsgRequest {
         this.userId = userId;
         this.giftId = giftId;
         this.count = count;
-        this.type = 1;
+        this.isNewApp = 1;
+        this.platform = GsonUtils.fromJson(CallKit.getInstance().getPlatformJson(), Platform.class);
+    }
+
+    public GiveGiftMsgRequest(long userId, String giftId, int type, int count) {
+        this.userId = userId;
+        this.giftId = giftId;
+        this.count = count;
+        this.type = type;
         this.isNewApp = 1;
         this.platform = GsonUtils.fromJson(CallKit.getInstance().getPlatformJson(), Platform.class);
     }
