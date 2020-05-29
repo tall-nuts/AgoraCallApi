@@ -10,7 +10,9 @@ import androidx.annotation.IntDef;
  */
 @IntDef({
         RoomType.VIDEO_CALL,
-        RoomType.VOICE_CALL
+        RoomType.VOICE_CALL,
+        RoomType.RANDOM_VIDEO_CALL,
+        RoomType.RANDOM_VOICE_CALL
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface RoomType {
@@ -18,4 +20,8 @@ public @interface RoomType {
     int VIDEO_CALL = 8;
     /** 一对一语音 */
     int VOICE_CALL = 9;
+    /** 随机视频 */
+    int RANDOM_VIDEO_CALL = 11;
+    /** 随机语音 */
+    int RANDOM_VOICE_CALL = 12;
 }
