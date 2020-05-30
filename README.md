@@ -5,13 +5,13 @@
 ![](https://travis-ci.org/pengfeigao/AgoraCallApi.svg?branch=master) [ ![Download](https://api.bintray.com/packages/akid/maven/1v1-call-api/images/download.svg) ](https://bintray.com/akid/maven/1v1-call-api/_latestVersion)
 ---
 
-##### 集成
+### 集成
 
 ```
  implementation 'io.agora.opensource:1v1-call-api:1.0.7'
 ```
 
-##### 使用
+### 使用
 
 1. 在登录成功后或在获取到登录token后，初始化sdk
 
@@ -36,29 +36,29 @@ CallKit.initForRePlugin(this, callConfig);
 
 ---
 
-##### CHANGELOG
+### CHANGELOG
 
-###### [1.0.7] - [2020-05-30]
+##### [1.0.7] - [2020-05-30]
 
-###### Change: 
+##### Change: 
 
 - 废弃ICallService中 interceptVip() interceptBalance() interceptNobleStar() 业务拦截api，使用exceptionHandler(ApiException e) 方法替代
 - 新增随机匹配相关api
 
-###### [1.0.6] - [2020-05-29]
+##### [1.0.6] - [2020-05-29]
 
-###### Change: 
+##### Change: 
 
 - RoomType 新增 随机视频：RANDOM_VIDEO_CALL = 11 随机语音：ANDOM_VOICE_CALL = 12;
 
-###### [1.0.5] - [2020-05-23]
+##### [1.0.5] - [2020-05-23]
 
-###### Fixed:
+##### Fixed:
 
 - 修复心跳响应中返回的ext对象解析问题
 
-###### [1.0.4] - [2020-05-08]
+##### [1.0.4] - [2020-05-08]
 
-###### Fixed:
+##### Fixed:
 
 - CallConfig.Builder增加setFixHeartbeatApi() api用于修复服务端根据不同渠道返回心跳数据结构不同
