@@ -8,10 +8,8 @@ import android.content.ComponentName;
 import android.os.Process;
 import android.util.Base64;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.basetools.api.ICallService;
 import com.basetools.constant.InviteType;
 import com.basetools.constant.RoomType;
@@ -45,7 +43,6 @@ import com.basetools.task.AbstractRandomMatchFailureTask;
 import com.basetools.task.AbstractRandomMatchSuccessTask;
 import com.basetools.task.IBaseTask;
 import com.basetools.util.Timber;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
