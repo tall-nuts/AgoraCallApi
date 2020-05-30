@@ -60,6 +60,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.2'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 }
 
 //添加
@@ -67,7 +68,7 @@ publish {
     userOrg = 'akid'
     groupId = 'io.agora.opensource'
     artifactId = '1v1-call-api'
-    publishVersion = '1.0.6'
+    publishVersion = '1.0.7'
     desc = 'Agora 1v1 video/voice call sdk api for developer'
     website = 'https://github.com/pengfeigao/AgoraCallApi'
 }

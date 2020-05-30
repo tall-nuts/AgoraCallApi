@@ -10,6 +10,7 @@ import android.util.Base64;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.basetools.api.ICallService;
 import com.basetools.constant.InviteType;
@@ -25,6 +26,8 @@ import com.basetools.model.HeartBeatResult2;
 import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
+import com.basetools.model.RandomRoomRequest;
+import com.basetools.model.RandomRoomResult;
 import com.basetools.model.RefuseRequest;
 import com.basetools.model.UpdatePackageRequest;
 import com.basetools.model.UpdatePackageResult;
@@ -38,6 +41,8 @@ import com.basetools.task.AbstractHeartbeatFailureTask;
 import com.basetools.task.AbstractHeartbeatSuccessTask;
 import com.basetools.task.AbstractJoinChannelFailureTask;
 import com.basetools.task.AbstractJoinChannelSuccessTask;
+import com.basetools.task.AbstractRandomMatchFailureTask;
+import com.basetools.task.AbstractRandomMatchSuccessTask;
 import com.basetools.task.IBaseTask;
 import com.basetools.util.Timber;
 
@@ -267,6 +272,65 @@ public class CallKit {
     }
 
     /**
+     * 创建随机匹配
+     *
+     * @param roomType 房间类型 11 || 12
+     * @param ext      扩展参数，会在ICallApi方法中返回
+     */
+    public static Intent createRandomMatchIntentForModule(@RoomType int roomType, Serializable ext) {
+        Intent intent = new Intent();
+        intent.putExtra("roomType", roomType);
+        intent.putExtra("ext", ext);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(new ComponentName("callPlugin", getCallActivityPath(false)));
+        return intent;
+    }
+
+    /**
+     * 创建随机匹配
+     *
+     * @param roomType 房间类型 11 || 12
+     * @param ext      扩展参数，会在ICallApi方法中返回
+     */
+    public static Intent createRandomMatchIntentForGlobalModule(@RoomType int roomType, Serializable ext) {
+        Intent intent = new Intent();
+        intent.putExtra("roomType", roomType);
+        intent.putExtra("ext", ext);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(new ComponentName("callPlugin", getCallActivityPath(false)));
+        return intent;
+    }
+
+    /**
+     * 创建随机匹配
+     *
+     * @param roomType 房间类型 11 || 12
+     * @param ext      扩展参数，会在ICallApi方法中返回
+     */
+    public static Intent createRandomMatchIntentForPlugin(@RoomType int roomType, Serializable ext) {
+        Intent intent = new Intent();
+        intent.putExtra("roomType", roomType);
+        intent.putExtra("ext", ext);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(new ComponentName("callPlugin", getCallActivityPath(false)));
+        return intent;
+    }
+
+    /**
+     * 取消匹配（发送广播来关闭）
+     *
+     * @param isGlobal 是否是海外项目集成
+     */
+    public static void cancelRandomMatch(Context context, boolean isGlobal) {
+        Intent intent = new Intent();
+        intent.setAction(isGlobal
+                ? "io.agora.opensource.call.action.PUSH"
+                : "com.juzhionline.call.action.PUSH");
+        intent.putExtra("type", 20);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    /**
      * 获取音视频插件或Module依赖的包名
      *
      * @param global 是否为海外集成
@@ -375,6 +439,33 @@ public class CallKit {
     }
 
     /**
+     * 随机匹配
+     *
+     * @param roomType  随机视频|随机语音匹配
+     * @param okTask    接口执行成功后需要执行的任务
+     * @param errorTask 接口执行失败后执行的任务
+     */
+    public void randomMatch(@RoomType int roomType, Serializable ext, AbstractRandomMatchSuccessTask okTask, AbstractRandomMatchFailureTask errorTask) {
+        CallRepository.getInstance().randomRoom(new RandomRoomRequest(roomType), new ApiObserver<RandomRoomResult>() {
+            @Override
+            public void onNext(RandomRoomResult randomRoomResult) {
+                if (okTask != null) {
+                    okTask.run(roomType, randomRoomResult.getData().getRoomId(), randomRoomResult.getData().getToken());
+                }
+            }
+
+            @Override
+            protected void onErrorResolved(Throwable e, String msg) {
+                Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
+                boolean runErrorTask = isNotInterceptException(e);
+                if (runErrorTask && errorTask != null) {
+                    errorTask.run();
+                }
+            }
+        });
+    }
+
+    /**
      * 加入频道
      *
      * @param channelId    频道ID
@@ -402,7 +493,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                boolean runErrorTask = resolvedError(e);
+                boolean runErrorTask = isNotInterceptException(e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
@@ -541,7 +632,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                boolean runErrorTask = resolvedError(e);
+                boolean runErrorTask = isNotInterceptException(e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
@@ -594,30 +685,19 @@ public class CallKit {
         Timber.d("logMonitoring >>> eventType:" + eventType + " | ext:" + ext);
     }
 
-    private boolean resolvedError(Throwable e) {
+    /**
+     * 检查该异常是否为拦截异常
+     * @param e 异常对象
+     * @return 非拦截异常 true  拦截异常 false
+     */
+    private boolean isNotInterceptException(Throwable e) {
         if (e instanceof ApiException) {
-            final int code = ((ApiException) e).getCode();
-            if (code == 1100) {
-                // 钻石不足
-                if (mCallService != null) {
-                    mCallService.interceptBalance();
-                }
-            } else if (code == 1304) {
-                // 需要VIP
-                if (mCallService != null) {
-                    mCallService.interceptVip();
-                }
-            } else if (code == 1308) {
-                // 星级拦截
-                if (mCallService != null) {
-                    mCallService.interceptNobleStar();
-                }
-            } else {
-                return true;
+            if (mCallService != null) {
+                return mCallService.exceptionHandler((ApiException) e);
             }
         } else {
             return true;
         }
-        return false;
+        return true;
     }
 }

@@ -3,6 +3,8 @@ package io.agora.opensource.callapi;
 import android.content.Context;
 import android.widget.ImageView;
 import com.basetools.api.ICallService;
+import com.basetools.net.core.ApiException;
+
 import java.io.Serializable;
 
 public class ICallServiceImpl implements ICallService {
@@ -93,18 +95,8 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public void interceptVip() {
-
-    }
-
-    @Override
-    public void interceptBalance() {
-
-    }
-
-    @Override
-    public void interceptNobleStar() {
-
+    public boolean exceptionHandler(ApiException exception) {
+        return false;
     }
 
     @Override
@@ -114,6 +106,11 @@ public class ICallServiceImpl implements ICallService {
 
     @Override
     public void onCallConnected(String channelId, Serializable serializable) {
+
+    }
+
+    @Override
+    public void onRandomMatchStatusChanged(int status, int roomType) {
 
     }
 

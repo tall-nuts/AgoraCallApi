@@ -13,10 +13,11 @@ import com.basetools.model.HeartBeatResult2;
 import com.basetools.model.JoinChannelRequest;
 import com.basetools.model.JoinChannelResult;
 import com.basetools.model.LeaveChannelRequest;
+import com.basetools.model.RandomRoomRequest;
+import com.basetools.model.RandomRoomResult;
 import com.basetools.model.RefuseRequest;
 import com.basetools.model.UpdatePackageRequest;
 import com.basetools.model.UpdatePackageResult;
-
 import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -31,6 +32,9 @@ public interface CallService {
 
     @POST("rocket/one/joinChannel")
     Observable<JoinChannelResult> joinChannel(@Body JoinChannelRequest request);
+
+    @POST("rocket/one/randomRoom")
+    Observable<RandomRoomResult> randomRoom(@Body RandomRoomRequest request);
 
     @POST("rocket/one/heartBeat")
     Observable<HeartBeatResult> heartbeat(@Body HeartBeatRequest request);

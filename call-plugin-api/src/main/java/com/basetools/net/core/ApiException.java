@@ -36,6 +36,14 @@ public class ApiException extends RuntimeException {
     public static final int BUSINESS_CODE_BLACK_LIST_ERROR = 1103;
     // 需要VIP权限
     public static final int BUSINESS_CODE_VIP_ERROR = 1304;
+    // 邮票不足
+    public static final int BUSINESS_CODE_STAMP_ERROR = 1306;
+    //(1308, "对方设置只接受贵族或好友视频","Each other's settings only accept videos from peers or friends"),// 1v1 vip 拦截
+    public static final int BUSINESS_CODE_NOBLE_ERROR = 1308;
+    // 首充拦截提示
+    public static final int BUSINESS_CODE_FIRST_RECHARGE_ERROR = 1405;
+    // 亲密度不足拦截
+    public static final int BUSINESS_CODE_INTIMACY_INTERCEPT_ERROR = 1501;
 
     private int code;
     private String msg;

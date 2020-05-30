@@ -3,6 +3,10 @@ package com.basetools.api;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+import com.basetools.constant.RandomMatchStatus;
+import com.basetools.constant.RoomType;
+import com.basetools.net.core.ApiException;
+
 import java.io.Serializable;
 
 /**
@@ -132,19 +136,11 @@ public interface ICallService {
     long getUserId();
 
     /**
-     * VIP拦截
+     * 异常处理
+     * @param exception 业务异常
+     * @return 若该异常为拦截异常返回 false，否则返回true（will finish act）
      */
-    void interceptVip();
-
-    /**
-     * 余额|钻石拦截
-     */
-    void interceptBalance();
-
-    /**
-     * 星级拦截
-     */
-    void interceptNobleStar();
+    boolean exceptionHandler(ApiException exception);
 
     /**
      * 发私信
@@ -162,6 +158,13 @@ public interface ICallService {
      * @param serializable 扩展信息
      */
     void onCallConnected(String channelId, Serializable serializable);
+
+    /**
+     * 随机匹配状态改变
+     * @param status 状态 {@link RandomMatchStatus}
+     * @param roomType 随机匹配通话类型 {@link RoomType}
+     */
+    void onRandomMatchStatusChanged(@RandomMatchStatus int status, @RoomType int roomType);
 
     /**
      * 1V1通话页面关闭
