@@ -5,8 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import com.basetools.constant.RandomMatchStatus;
 import com.basetools.constant.RoomType;
+import com.basetools.model.UserInfo;
 import com.basetools.net.core.ApiException;
-
 import java.io.Serializable;
 
 /**
@@ -23,22 +23,10 @@ import java.io.Serializable;
 public interface ICallService {
 
     /**
-     * 获取当前用户性别
+     * 获取当前用户信息
      * @return
      */
-    int getGender();
-
-    /**
-     * 是否是主播
-     * @return
-     */
-    boolean isAnchor();
-
-    /**
-     * 是否是VIP用户
-     * @return
-     */
-    boolean isVip();
+    UserInfo getCurrentUserInfo();
 
     /**
      * 视频通话摄像头默认是否开启
@@ -75,7 +63,7 @@ public interface ICallService {
      * @param giftId 礼物ID
      * @return
      */
-    void getGiftIcon(String giftId, DownloadGiftDrawableListener listener);
+    void getGiftIconAsyn(String giftId, DownloadGiftDrawableListener listener);
 
     /**
      * 加载图片
@@ -93,17 +81,6 @@ public interface ICallService {
      * @param corners 圆角角度
      */
     void loadRoundedImage(Context context, String imgUrl, ImageView imageView, int corners);
-
-    /**
-     * 播放呼叫提示音
-     * @param isLoop 是否循环播放
-     */
-    void startCallInviteSound(boolean isLoop);
-
-    /**
-     * 停止播放提示音
-     */
-    void stopCallInviteSound();
 
     /**
      * 展示充值弹窗
@@ -128,12 +105,6 @@ public interface ICallService {
      * @return
      */
     int getVideoProfile();
-
-    /**
-     * 获取当前用户ID
-     * @return
-     */
-    long getUserId();
 
     /**
      * 异常处理

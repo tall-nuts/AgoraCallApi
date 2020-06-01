@@ -8,7 +8,7 @@
 ### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.7'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.8'
 ```
 
 ### 使用
@@ -38,27 +38,34 @@ CallKit.initForRePlugin(this, callConfig);
 
 ### CHANGELOG
 
+##### [1.0.8] - [2020-06-01]
+
+##### Change:
+
+- 废弃ICallService中有关当前用户基本信息的api 方法，使用 UserInfo getCurrentUserInfo() 方法替代。
+- 更改getGiftIcon(String giftId, DownloadGiftDrawableListener listener) -> getGiftIconAsyn(String giftId, DownloadGiftDrawableListener listener) 方法名。
+
 ##### [1.0.7] - [2020-05-30]
 
 ##### Change: 
 
-- 废弃ICallService中 interceptVip() interceptBalance() interceptNobleStar() 业务拦截api，使用exceptionHandler(ApiException e) 方法替代
-- 新增随机匹配相关api
+- 废弃ICallService中 interceptVip() interceptBalance() interceptNobleStar() 业务拦截api，使用exceptionHandler(ApiException e) 方法替代。
+- 新增随机匹配相关api。
 
 ##### [1.0.6] - [2020-05-29]
 
 ##### Change: 
 
-- RoomType 新增 随机视频：RANDOM_VIDEO_CALL = 11 随机语音：ANDOM_VOICE_CALL = 12;
+- RoomType 新增 随机视频：RANDOM_VIDEO_CALL = 11 随机语音：ANDOM_VOICE_CALL = 12。
 
 ##### [1.0.5] - [2020-05-23]
 
 ##### Fixed:
 
-- 修复心跳响应中返回的ext对象解析问题
+- 修复心跳响应中返回的ext对象解析问题。
 
 ##### [1.0.4] - [2020-05-08]
 
 ##### Fixed:
 
-- CallConfig.Builder增加setFixHeartbeatApi() api用于修复服务端根据不同渠道返回心跳数据结构不同
+- CallConfig.Builder增加setFixHeartbeatApi() api用于修复服务端根据不同渠道返回心跳数据结构不同。
