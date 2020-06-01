@@ -3,6 +3,7 @@ package io.agora.opensource.callapi;
 import android.content.Context;
 import android.widget.ImageView;
 import com.basetools.api.ICallService;
+import com.basetools.model.UserInfo;
 import com.basetools.net.core.ApiException;
 
 import java.io.Serializable;
@@ -10,18 +11,8 @@ import java.io.Serializable;
 public class ICallServiceImpl implements ICallService {
 
     @Override
-    public int getGender() {
-        return 0;
-    }
-
-    @Override
-    public boolean isAnchor() {
-        return false;
-    }
-
-    @Override
-    public boolean isVip() {
-        return false;
+    public UserInfo getCurrentUserInfo() {
+        return null;
     }
 
     @Override
@@ -50,7 +41,7 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public void getGiftIcon(String giftId, DownloadGiftDrawableListener listener) {
+    public void getGiftIconAsyn(String giftId, DownloadGiftDrawableListener listener) {
 
     }
 
@@ -61,16 +52,6 @@ public class ICallServiceImpl implements ICallService {
 
     @Override
     public void loadRoundedImage(Context context, String imgUrl, ImageView imageView, int corners) {
-
-    }
-
-    @Override
-    public void startCallInviteSound(boolean isLoop) {
-
-    }
-
-    @Override
-    public void stopCallInviteSound() {
 
     }
 
@@ -86,11 +67,6 @@ public class ICallServiceImpl implements ICallService {
 
     @Override
     public int getVideoProfile() {
-        return 0;
-    }
-
-    @Override
-    public long getUserId() {
         return 0;
     }
 
