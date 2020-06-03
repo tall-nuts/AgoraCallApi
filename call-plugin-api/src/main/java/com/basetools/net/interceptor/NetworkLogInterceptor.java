@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
+
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -32,11 +33,10 @@ public class NetworkLogInterceptor implements Interceptor {
         }
 
         if (isNotFileRequest(rSubtype)) {
-            Timber.d("Request: %s on %s%nRequest Params:%s %n%s",
-                    request.url(),
-                    chain.connection(),
-                    bodyToString(request),
-                    request.headers());
+            Timber.d("Request: " + request.url()
+                    + " on " + chain.connection()
+                    + "%nRequest Params:" + bodyToString(request)
+                    + " %n" + request.headers());
         }
 
         Response response = chain.proceed(request);
@@ -48,11 +48,10 @@ public class NetworkLogInterceptor implements Interceptor {
         if (responseBody != null) {
             // final String content = responseBody.string();
             final String content = uncompress(responseBody.bytes());
-            Timber.d("Response: [%s] %nResponse data:%s  %.1fms%n%s",
-                    response.request().url(),
-                    content,
-                    (t2 - t1) / 1e6d,
-                    response.headers());
+            Timber.d("Response: [" + response.request().url()
+                    + "] %nResponse data:" + content
+                    + "  " + ((t2 - t1) / 1e6d) + "ms"
+                    + "%n" + response.headers());
         } else {
             Timber.d("responseBody is null");
         }
