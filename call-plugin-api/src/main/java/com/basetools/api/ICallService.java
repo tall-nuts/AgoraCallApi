@@ -108,10 +108,11 @@ public interface ICallService {
 
     /**
      * 异常处理
+     * @param roomType 房间类型
      * @param exception 业务异常
      * @return 若该异常为拦截异常返回 false，否则返回true（will finish act）
      */
-    boolean exceptionHandler(ApiException exception);
+    boolean processException(@RoomType int roomType, ApiException exception);
 
     /**
      * 发私信

@@ -453,7 +453,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                boolean runErrorTask = isNotInterceptException(e);
+                boolean runErrorTask = isNotInterceptException(roomType, e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
@@ -463,14 +463,14 @@ public class CallKit {
 
     /**
      * 加入频道
-     *
+     * @param roomType 房间类型
      * @param channelId    频道ID
      * @param loginFeeType 是否已建立通话(注：joinChannel、heartBeat都传) 0 否 1 是
      * @param ext          扩展参数
      * @param okTask       接口执行成功后需要执行的任务
      * @param errorTask    接口执行失败后执行的任务
      */
-    public void joinChannel(String channelId, int loginFeeType, Serializable ext, AbstractJoinChannelSuccessTask okTask, AbstractJoinChannelFailureTask errorTask) {
+    public void joinChannel(@RoomType int roomType, String channelId, int loginFeeType, Serializable ext, AbstractJoinChannelSuccessTask okTask, AbstractJoinChannelFailureTask errorTask) {
         Timber.d("joinChannel >>> channelId:" + channelId + " | ext:" + ext);
         CallRepository.getInstance().joinChannel(new JoinChannelRequest(channelId, loginFeeType), new ApiObserver<JoinChannelResult>() {
 
@@ -489,7 +489,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                boolean runErrorTask = isNotInterceptException(e);
+                boolean runErrorTask = isNotInterceptException(roomType, e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
@@ -628,7 +628,7 @@ public class CallKit {
             @Override
             protected void onErrorResolved(Throwable e, String msg) {
                 Toast.makeText(getContext(), msg + "", Toast.LENGTH_SHORT).show();
-                boolean runErrorTask = isNotInterceptException(e);
+                boolean runErrorTask = isNotInterceptException(roomType, e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
                 }
@@ -687,10 +687,10 @@ public class CallKit {
      * @param e 异常对象
      * @return 非拦截异常 true  拦截异常 false
      */
-    private boolean isNotInterceptException(Throwable e) {
+    private boolean isNotInterceptException(@RoomType int roomType, Throwable e) {
         if (e instanceof ApiException) {
             if (mCallService != null) {
-                return mCallService.exceptionHandler((ApiException) e);
+                return mCallService.processException(roomType, (ApiException) e);
             }
         } else {
             return true;

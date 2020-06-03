@@ -8,7 +8,7 @@
 ### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.11'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.12'
 ```
 
 ### 使用
@@ -38,11 +38,21 @@ CallKit.initForRePlugin(this, callConfig);
 
 ### CHANGELOG
 
+##### [1.0.12] - [2020-06-03]
+
+##### Change:
+
+- ICallService exceptionHandler() -> processException() 
+
 ##### [1.0.11] - [2020-06-03]
+
+##### Change:
 
 - ICallService onCallActivityFinish方法中新增boolean cancelMatch 是否取消匹配字段
 
 ##### [1.0.10] - [2020-06-03]
+
+##### Change:
 
 - ICallService onCallActivityFinish方法中新增roomType通话类型
 

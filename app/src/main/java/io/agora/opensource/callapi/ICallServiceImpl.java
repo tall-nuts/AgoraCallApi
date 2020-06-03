@@ -6,7 +6,6 @@ import com.basetools.api.ICallService;
 import com.basetools.constant.RoomType;
 import com.basetools.model.UserInfo;
 import com.basetools.net.core.ApiException;
-
 import java.io.Serializable;
 
 public class ICallServiceImpl implements ICallService {
@@ -72,7 +71,7 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public boolean exceptionHandler(ApiException exception) {
+    public boolean processException(int roomType, ApiException exception) {
         return false;
     }
 
