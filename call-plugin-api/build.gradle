@@ -68,7 +68,7 @@ publish {
     userOrg = 'akid'
     groupId = 'io.agora.opensource'
     artifactId = '1v1-call-api'
-    publishVersion = '1.0.8'
+    publishVersion = '1.0.9'
     desc = 'Agora 1v1 video/voice call sdk api for developer'
     website = 'https://github.com/pengfeigao/AgoraCallApi'
 }

@@ -8,7 +8,7 @@
 ### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.8'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.9'
 ```
 
 ### 使用
@@ -37,6 +37,13 @@ CallKit.initForRePlugin(this, callConfig);
 ---
 
 ### CHANGELOG
+
+##### [1.0.9] - [2020-06-02]
+
+##### Fixed:
+
+- 修复CallKit createRandomMatchIntentForGlobalModule() ComponentName设置错误。
+- 修复Timber打印日志重复，使用系统日志打印。
 
 ##### [1.0.8] - [2020-06-01]
 

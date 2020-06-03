@@ -8,8 +8,10 @@ import android.content.ComponentName;
 import android.os.Process;
 import android.util.Base64;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.basetools.api.ICallService;
 import com.basetools.constant.InviteType;
 import com.basetools.constant.RoomType;
@@ -43,6 +45,7 @@ import com.basetools.task.AbstractRandomMatchFailureTask;
 import com.basetools.task.AbstractRandomMatchSuccessTask;
 import com.basetools.task.IBaseTask;
 import com.basetools.util.Timber;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -91,9 +94,7 @@ public class CallKit {
      * @param config      配置
      */
     public static void initForModule(@NonNull Application application, @NonNull CallConfig config) {
-        if (config.isDebugEnable()) {
-            Timber.plant(new Timber.DebugTree());
-        }
+        Timber.setDebugEnable(config.isDebugEnable());
         mApp = application;
         mCallConfig = config;
         boolean isMainProcess = application.getApplicationContext().getPackageName().equals(getCurrentProcessName(application));
@@ -127,9 +128,7 @@ public class CallKit {
      * @param config      配置
      */
     public static void initForRePlugin(@NonNull Application application, @NonNull CallConfig config) {
-        if (config.isDebugEnable()) {
-            Timber.plant(new Timber.DebugTree());
-        }
+        Timber.setDebugEnable(config.isDebugEnable());
         mApp = application;
         mCallConfig = config;
         Timber.d("initForRePlugin success.");
@@ -274,12 +273,12 @@ public class CallKit {
      * @param roomType 房间类型 11 || 12
      * @param ext      扩展参数，会在ICallApi方法中返回
      */
-    public static Intent createRandomMatchIntentForModule(@RoomType int roomType, Serializable ext) {
+    public static Intent createRandomMatchIntentForModule(Context context, @RoomType int roomType, Serializable ext) {
         Intent intent = new Intent();
         intent.putExtra("roomType", roomType);
         intent.putExtra("ext", ext);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(new ComponentName("callPlugin", getCallActivityPath(false)));
+        intent.setClassName(context.getPackageName(), getCallActivityPath(false));
         return intent;
     }
 
@@ -289,12 +288,12 @@ public class CallKit {
      * @param roomType 房间类型 11 || 12
      * @param ext      扩展参数，会在ICallApi方法中返回
      */
-    public static Intent createRandomMatchIntentForGlobalModule(@RoomType int roomType, Serializable ext) {
+    public static Intent createRandomMatchIntentForGlobalModule(Context context, @RoomType int roomType, Serializable ext) {
         Intent intent = new Intent();
         intent.putExtra("roomType", roomType);
         intent.putExtra("ext", ext);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(new ComponentName("callPlugin", getCallActivityPath(false)));
+        intent.setClassName(context.getPackageName(), getCallActivityPath(true));
         return intent;
     }
 
@@ -684,6 +683,7 @@ public class CallKit {
 
     /**
      * 检查该异常是否为拦截异常
+     *
      * @param e 异常对象
      * @return 非拦截异常 true  拦截异常 false
      */
