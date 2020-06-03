@@ -92,7 +92,8 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public void onCallActivityFinish(@RoomType int roomType, long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext) {
+    public void onCallActivityFinish(@RoomType int roomType, boolean cancelMatch,
+                                     long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext) {
 
     }
 }

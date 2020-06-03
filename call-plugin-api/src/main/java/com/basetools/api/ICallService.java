@@ -139,13 +139,15 @@ public interface ICallService {
 
     /**
      * 1V1通话页面关闭
-     * @param roomType roomType
+     * @param roomType 通话类型
+     * @param cancelMatch 是否取消匹配
      * @param remoteUid 对方ID
      * @param remoteNickname 对方昵称
      * @param remoteAvatar 对方头像
      * @param ext 扩展参数
      */
-    void onCallActivityFinish(@RoomType int roomType, long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext);
+    void onCallActivityFinish(@RoomType int roomType, boolean cancelMatch, long remoteUid,
+                              String remoteNickname, String remoteAvatar, Serializable ext);
 
     interface DownloadGiftDrawableListener{
         void onDownloadSuccess(Drawable drawable);
