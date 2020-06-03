@@ -3,6 +3,7 @@ package io.agora.opensource.callapi;
 import android.content.Context;
 import android.widget.ImageView;
 import com.basetools.api.ICallService;
+import com.basetools.constant.RoomType;
 import com.basetools.model.UserInfo;
 import com.basetools.net.core.ApiException;
 
@@ -91,7 +92,7 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
-    public void onCallActivityFinish(long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext) {
+    public void onCallActivityFinish(@RoomType int roomType, long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext) {
 
     }
 }
