@@ -36,6 +36,10 @@ CallKit.initForRePlugin(this, callConfig);
 
 ---
 
+### 注：
+
+由于CallActivity会有最小化功能，客户端在实现ICallService接口逻辑代码中出现的宿主Activity需要指定为singleTask启动模式，且taskAffinity为 ":common"（MainActivity除外）。
+
 ### CHANGELOG
 
 ##### [1.0.14] - [2020-06-05]
