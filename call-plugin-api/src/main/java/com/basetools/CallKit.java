@@ -456,6 +456,9 @@ public class CallKit {
                 boolean runErrorTask = isNotInterceptException(roomType, e);
                 if (runErrorTask && errorTask != null) {
                     errorTask.run();
+                }else {
+                    // 若是拦截异常，则走okTask继续轮询匹配
+                    okTask.run(roomType, 0, "");
                 }
             }
         });

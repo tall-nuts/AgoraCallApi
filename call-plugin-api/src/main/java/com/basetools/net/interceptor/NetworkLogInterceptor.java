@@ -35,8 +35,8 @@ public class NetworkLogInterceptor implements Interceptor {
         if (isNotFileRequest(rSubtype)) {
             Timber.d("Request: " + request.url()
                     + " on " + chain.connection()
-                    + "%nRequest Params:" + bodyToString(request)
-                    + " %n" + request.headers());
+                    + "\nRequest Params:" + bodyToString(request)
+                    + " \n" + request.headers());
         }
 
         Response response = chain.proceed(request);
@@ -49,9 +49,9 @@ public class NetworkLogInterceptor implements Interceptor {
             // final String content = responseBody.string();
             final String content = uncompress(responseBody.bytes());
             Timber.d("Response: [" + response.request().url()
-                    + "] %nResponse data:" + content
+                    + "] \nResponse data:" + content
                     + "  " + ((t2 - t1) / 1e6d) + "ms"
-                    + "%n" + response.headers());
+                    + "\n" + response.headers());
         } else {
             Timber.d("responseBody is null");
         }

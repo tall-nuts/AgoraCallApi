@@ -8,7 +8,7 @@
 ### 集成
 
 ```
- implementation 'io.agora.opensource:1v1-call-api:1.0.12'
+ implementation 'io.agora.opensource:1v1-call-api:1.0.14'
 ```
 
 ### 使用
@@ -37,6 +37,18 @@ CallKit.initForRePlugin(this, callConfig);
 ---
 
 ### CHANGELOG
+
+##### [1.0.14] - [2020-06-05]
+
+##### Change:
+
+- ICallService 新增 onCallActivityMinimize() 回调方法
+
+##### [1.0.13] - [2020-06-04]
+
+##### Change:
+
+- CallKit randomMatch() 代码逻辑修改
 
 ##### [1.0.12] - [2020-06-03]
 

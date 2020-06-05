@@ -91,6 +91,11 @@ public class ICallServiceImpl implements ICallService {
     }
 
     @Override
+    public void onCallActivityMinimize() {
+
+    }
+
+    @Override
     public void onCallActivityFinish(@RoomType int roomType, boolean cancelMatch,
                                      long remoteUid, String remoteNickname, String remoteAvatar, Serializable ext) {
 

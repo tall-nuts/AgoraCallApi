@@ -139,6 +139,11 @@ public interface ICallService {
     void onRandomMatchStatusChanged(@RandomMatchStatus int status, @RoomType int roomType);
 
     /**
+     * 最小化
+     */
+    void onCallActivityMinimize();
+
+    /**
      * 1V1通话页面关闭
      * @param roomType 通话类型
      * @param cancelMatch 是否取消匹配
